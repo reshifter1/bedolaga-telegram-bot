@@ -1,12 +1,14 @@
 .PHONY: up
 up: ## Поднять контейнеры (detached)
 	@echo "🚀 Поднимаем контейнеры (detached)..."
-	docker compose up -d --build
+	-@docker compose build
+	docker compose up -d
 
 .PHONY: up-follow
 up-follow: ## Поднять контейнеры с логами
 	@echo "📡 Поднимаем контейнеры (в консоли)..."
-	docker compose up --build
+	-@docker compose build
+	docker compose up
 
 .PHONY: down
 down: ## Остановить и удалить контейнеры
