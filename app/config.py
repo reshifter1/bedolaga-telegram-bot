@@ -566,14 +566,21 @@ class Settings(BaseSettings):
     ) -> str:
         template = self.REMNAWAVE_USER_USERNAME_TEMPLATE or "user_{telegram_id}"
 
+        MAX_REMNAWAVE_USERNAME = 36
+
         username_clean = (username or "").lstrip("@")
         full_name_value = full_name or ""
+
+        telegram_id_str = str(telegram_id)
+        max_name_len = MAX_REMNAWAVE_USERNAME - len(telegram_id_str) - 2
+        username_clean = username_clean[:max_name_len]
+        full_name_value = full_name_value[:max_name_len]
 
         values = defaultdict(str, {
             "full_name": full_name_value,
             "username": username_clean,
             "username_clean": username_clean,
-            "telegram_id": str(telegram_id),
+            "telegram_id": telegram_id_str,
         })
 
         raw_username = template.format_map(values).strip()
@@ -583,7 +590,7 @@ class Settings(BaseSettings):
         if not sanitized_username:
             sanitized_username = f"user_{telegram_id}"
 
-        return sanitized_username[:64]
+        return sanitized_username[:MAX_REMNAWAVE_USERNAME]
 
     @staticmethod
     def parse_daily_time_list(raw_value: Optional[str]) -> List[time]:
